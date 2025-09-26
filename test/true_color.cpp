@@ -33,16 +33,18 @@ int main() {
   gl_buffer_data(GL_UNIFORM_BUFFER, sizeof(glm::vec2), &dim, GL_STATIC_DRAW);
 
   // Initialize untex with UBO
-  if (untex::init(render_ubo) != untex::Error::None) {
-    std::cerr << "Failed to initialize untex\n";
+  //
+  const auto error = untex::init(render_ubo);
+  if (error) {
+    std::cout << *error << std::endl;
     return -1;
   }
 
   // Example quads
-  glm::vec2 positions[] = {{100, 100}, {300, 200}, {500, 400}};
-  glm::u16vec2 scales[] = {{50, 50}, {80, 40}, {60, 90}};
+  glm::vec2 positions[] = {{.4, .4}, {.5, .2}};
+  glm::u16vec2 scales[] = {{.6, .6}, {.5, .5}, {60, 90}};
   glm::u8vec4 colors[] = {{255, 0, 0, 255}, {0, 255, 0, 255}, {0, 0, 255, 255}};
-  const int count = 3;
+  const int count = 2;
 
   while (!glfwWindowShouldClose(window)) {
     GLenum err;
