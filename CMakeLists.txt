@@ -21,6 +21,6 @@ set_property(TARGET untex PROPERTY CXX_SCAN_FOR_MODULES OFF)
 
 if(UNTEX_TESTS)
   cpmaddpackage("gh:glfw/glfw#3.4")
-  add_executable(true_color "${CMAKE_CURRENT_SOURCE_DIR}/test/true_color.cpp")
+  add_executable(true_color "test/true_color.cpp")
   target_link_libraries(true_color PRIVATE glfw untex glext betr)
 endif()

@@ -7,8 +7,7 @@ layout(location = 0) in vec2 base_pos;
 layout(location = 1) in vec2 pos;
 
 void main() {
-  // uvec2 scale_vec = uvec2(scale & 0x0000FFFFu, scale >> 16);
-  gl_Position = vec4(base_pos, 0.0, 1.0);
+  gl_Position = vec4(base_pos + pos, 0.0, 1.0);
 }
 )";
 

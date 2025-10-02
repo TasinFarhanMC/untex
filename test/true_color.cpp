@@ -34,17 +34,26 @@ int main() {
 
   // Initialize untex with UBO
   //
-  const auto error = untex::init(render_ubo);
-  if (error) {
-    std::cout << *error << std::endl;
+  if (const std::string error = untex::init(); error.size()) {
+    std::cout << error << std::endl;
     return -1;
   }
 
   // Example quads
-  glm::vec2 positions[] = {{.4, .4}, {.5, .2}};
-  glm::u16vec2 scales[] = {{.6, .6}, {.5, .5}, {60, 90}};
+  glm::vec2 positions[] = {{.4, .4}, {-1, -1}};
+  glm::u16vec2 scales[] = {{.6, .6}, {.5, .5}, {60, 9}};
   glm::u8vec4 colors[] = {{255, 0, 0, 255}, {0, 255, 0, 255}, {0, 0, 255, 255}};
   const int count = 2;
+
+  constexpr float SPACE_HEIGHT = 90.0f;
+  constexpr float SPACE_WIDTH = 160.0f;
+
+  glfwSetFramebufferSizeCallback(window, [](GLFWwindow *window, int width, int height) {
+    float min = std::min(width / SPACE_WIDTH, height / SPACE_HEIGHT);
+    float m_width = min * SPACE_WIDTH;
+    float m_height = min * SPACE_HEIGHT;
+    gl_viewport(std::abs(width - m_width) / 2, std::abs(height - m_height) / 2, m_width, m_height);
+  });
 
   while (!glfwWindowShouldClose(window)) {
     GLenum err;
@@ -54,10 +63,28 @@ int main() {
     gl_clear(GL_COLOR_BUFFER_BIT);
 
     // Render instanced quads
-    untex::render_true_color(positions, scales, colors, count);
+    untex::render_true_color(positions, count);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
+
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) { glfwSetWindowShouldClose(window, true); }
+
+    static bool aspect_ratio_locked = false;
+    static bool v_pressed_last_frame = false;
+    bool v_pressed = glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS;
+
+    // Detect key press edge (just pressed)
+    if (v_pressed && !v_pressed_last_frame) {
+      aspect_ratio_locked = !aspect_ratio_locked; // toggle
+      if (aspect_ratio_locked) {
+        glfwSetWindowAspectRatio(window, SPACE_WIDTH, SPACE_HEIGHT);
+      } else {
+        glfwSetWindowAspectRatio(window, GLFW_DONT_CARE, GLFW_DONT_CARE);
+      }
+    }
+
+    v_pressed_last_frame = v_pressed;
   }
 
   untex::clean();
