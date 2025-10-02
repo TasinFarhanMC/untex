@@ -96,6 +96,18 @@ std::string init() {
   gl_vertex_attrib_divisor(1, 1);
   gl_vertex_attrib_binding(1, POS);
 
+  gl_bind_vertex_buffer(SCALE, scale_vbo, 0, sizeof(u16vec2));
+  gl_enable_vertex_attrib_array(2);
+  gl_vertex_attrib_iformat(2, 2, GL_UNSIGNED_SHORT, 0);
+  gl_vertex_attrib_divisor(2, 1);
+  gl_vertex_attrib_binding(2, SCALE);
+
+  gl_bind_vertex_buffer(COLOR, color_vbo, 0, sizeof(u8vec4));
+  gl_enable_vertex_attrib_array(3);
+  gl_vertex_attrib_format(3, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0);
+  gl_vertex_attrib_divisor(3, 1);
+  gl_vertex_attrib_binding(3, COLOR);
+
   gl_delete_shader(vertex);
   gl_delete_shader(fragment);
   return "";

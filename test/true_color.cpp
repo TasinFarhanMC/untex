@@ -25,6 +25,20 @@ int main() {
     return -1;
   }
 
+  constexpr float SPACE_HEIGHT = 90.0f;
+  constexpr float SPACE_WIDTH = 160.0f;
+
+  glfwSetFramebufferSizeCallback(window, [](GLFWwindow *window, int width, int height) {
+    float min = std::min(width / SPACE_WIDTH, height / SPACE_HEIGHT);
+    float m_width = min * SPACE_WIDTH;
+    float m_height = min * SPACE_HEIGHT;
+    gl_viewport(std::abs(width - m_width) / 2, std::abs(height - m_height) / 2, m_width, m_height);
+  });
+
+  const GLFWvidmode *monitor_info = glfwGetVideoMode(glfwGetPrimaryMonitor());
+  glfwSetWindowSize(window, monitor_info->width * 2 / 3, monitor_info->height * 2 / 3);
+  glfwSetWindowPos(window, monitor_info->width / 6, monitor_info->height / 6);
+
   // Create UBO for render dimensions
   GLuint render_ubo;
   gl_gen_buffers(1, &render_ubo);
@@ -40,20 +54,10 @@ int main() {
   }
 
   // Example quads
-  glm::vec2 positions[] = {{.4, .4}, {-1, -1}};
-  glm::u16vec2 scales[] = {{.6, .6}, {.5, .5}, {60, 9}};
-  glm::u8vec4 colors[] = {{255, 0, 0, 255}, {0, 255, 0, 255}, {0, 0, 255, 255}};
-  const int count = 2;
-
-  constexpr float SPACE_HEIGHT = 90.0f;
-  constexpr float SPACE_WIDTH = 160.0f;
-
-  glfwSetFramebufferSizeCallback(window, [](GLFWwindow *window, int width, int height) {
-    float min = std::min(width / SPACE_WIDTH, height / SPACE_HEIGHT);
-    float m_width = min * SPACE_WIDTH;
-    float m_height = min * SPACE_HEIGHT;
-    gl_viewport(std::abs(width - m_width) / 2, std::abs(height - m_height) / 2, m_width, m_height);
-  });
+  glm::vec2 positions[] = {{0, 0}, {50, 50}, {90, 10}};
+  glm::u16vec2 scales[] = {{10, 10}, {10, 10}, {60, 9}};
+  glm::u8vec4 colors[] = {{255, 241, 233, 255}, {182, 255, 255, 255}, {255, 153, 255, 255}};
+  const int count = 3;
 
   while (!glfwWindowShouldClose(window)) {
     GLenum err;
@@ -63,7 +67,7 @@ int main() {
     gl_clear(GL_COLOR_BUFFER_BIT);
 
     // Render instanced quads
-    untex::render_true_color(positions, count);
+    untex::render_true_color(positions, scales, colors, count);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
